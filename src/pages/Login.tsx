@@ -1,15 +1,11 @@
 import Navbar from "../components/Navbar"
 import React from "react"
-import { loginUrl } from "../services/service"
-import axios from "axios"
+import { _logIn } from "../services/service"
+import { LoginType } from "../type.index"
 import { navigate } from "gatsby"
 
-type Login = {
-  email: string
-  password: string
-}
-const Login = () => {
-  const [credential, setCredential] = React.useState<Login>({
+const Login: React.FC = () => {
+  const [credential, setCredential] = React.useState<LoginType>({
     email: "",
     password: "",
   })
@@ -19,17 +15,20 @@ const Login = () => {
     setCredential({ ...current })
   }
   const handleSubmit = async () => {
-    let payLoad = {
-      email: credential.email,
-      password: credential.password,
+    try {
+      let payLoad = {
+        email: credential.email,
+        password: credential.password,
+      }
+      let res = await _logIn(payLoad)
+      let data = res
+      console.log(data)
+      if (data.token && data.status === "success")
+        navigate("/", { replace: true })
+      console.log(data)
+    } catch (error) {
+      alert(error)
     }
-    let res = await axios.post(loginUrl, payLoad)
-
-    let data = await res.data
-    if (data.token && data.status === "success") {
-      localStorage.setItem("token", data.token)
-      navigate("/")
-    } else alert(data.message)
   }
   return (
     <React.Fragment>

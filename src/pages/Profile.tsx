@@ -1,34 +1,30 @@
 import Navbar from "../components/Navbar"
-import axios from "axios"
 import React from "react"
-import { profileUrl } from "../services/service"
+import { PROFILE_URL } from "../services/service"
 import { User } from "../type.index"
 
 const Profile = () => {
   const [user, setUser] = React.useState<User>()
-  const [token, setToken] = React.useState<string>()
-  const getProfile = async (token: string) => {
-    try {
-      let res = await axios.get(profileUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      let data = await res.data
-      setUser({ ...data.data.doc })
-    } catch (err) {
-      console.log(err.message)
-    }
-  }
+  // const [token, setToken] = React.useState<string>()
   React.useEffect(() => {
-    const setter = setToken(localStorage.getItem("token"))
-    const getter = getProfile(token)
-    return () => {
-      setter
-      getter
+    const getProfile = async () => {
+      try {
+        let res = await fetch(PROFILE_URL, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        const data = await res.json()
+        console.log(data)
+        setUser(data.data.doc)
+      } catch (err) {
+        console.log(err.message)
+      }
     }
-  }, [token])
-  console.log(user)
+    getProfile()
+  }, [])
 
   return (
     <React.Fragment>
@@ -37,6 +33,7 @@ const Profile = () => {
         <h3>Name:{user?.name}</h3>
         <h3>Email:{user?.email}</h3>
         <h3>Role:{user?.role}</h3>
+        <h3>Id:{user?._id}</h3>
       </div>
     </React.Fragment>
   )

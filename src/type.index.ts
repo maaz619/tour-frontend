@@ -2,6 +2,7 @@ export type User = {
   name: string
   email: string
   role: string
+  _id: string
 }
 export type CardType = {
   name: string
@@ -18,4 +19,8 @@ export type CardType = {
   price: number
   locations: []
   slug: string
+}
+export type LoginType = {
+  email: string
+  password: string
 }
